@@ -1,0 +1,16 @@
+# Credenciales de cada estación: NUNCA se suben
+secrets.h
+**/secrets.h
+
+# Compilaciones y archivos temporales del Arduino IDE / arduino-cli
+build/
+*.bin
+*.elf
+*.map
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -35,3 +35,9 @@ Cada lectura se guarda en una **MicroSD**, con fecha y hora de un reloj **DS1307
 ## Aviso sobre los datos
 
 Las concentraciones de gases del MQ-135 son **estimaciones** que dependen de la calibración del sensor. No sustituyen un instrumento certificado.
+
+## Licencia
+
+[MIT](LICENSE) © 2026 Facultad de Ingeniería de Sistemas e Informática (FISI), Universidad Nacional de la Amazonía Peruana (UNAP).
+
+Puedes usar, modificar y compartir este código libremente, incluso en otros proyectos, siempre que conserves el aviso de autoría y de licencia.

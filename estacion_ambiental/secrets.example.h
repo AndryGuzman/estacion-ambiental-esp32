@@ -92,7 +92,7 @@ static const char ROOT_CA[] =
 //    Con un R0 en 0 la estación funciona, pero envía vacíos los gases de ese sensor.
 // -----------------------------------------------------------------------------
 #define MODO_CALIBRACION        1
-#define ESTACION_MQ135_R0_KOHM  0.0   // CO2, amoníaco y alcohol
+#define ESTACION_MQ135_R0_KOHM  0.0   // CO2 y amoníaco
 #define ESTACION_MQ7_R0_KOHM    0.0   // monóxido de carbono (CO)
 
 // -----------------------------------------------------------------------------

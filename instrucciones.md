@@ -2,10 +2,10 @@
 
 Guía paso a paso para armar, programar y conectar tu estación a la plataforma de la FISI-UNAP. No necesitas experiencia previa: sigue los pasos en orden.
 
-**Qué vas a lograr:** tu ESP32 medirá cada minuto los gases del aire (CO₂, CO, amoníaco y alcohol), guardará cada lectura en una tarjeta MicroSD y la enviará por Wi-Fi a la API de la FISI, donde aparecerá en un dashboard en tiempo real.
+**Qué vas a lograr:** tu ESP32 medirá cada minuto los gases del aire (CO₂, CO y amoníaco), guardará cada lectura en una tarjeta MicroSD y la enviará por Wi-Fi a la API de la FISI, donde aparecerá en un dashboard en tiempo real.
 
 ```
- MQ-135 (CO₂, NH₃, alcohol) ─┐
+ MQ-135 (CO₂, NH₃) ──────────┐
  MQ-7   (CO) ─────────────────┼──► ESP32 ──Wi-Fi──► API FISI (fisiunap.edu.pe) ──► Dashboard
  DS1307 (reloj) ──────────────┤        │
  MicroSD ─────────────────────┘        └──► /datos.csv (respaldo en la tarjeta)
@@ -56,7 +56,7 @@ Además necesitas el **nombre y la contraseña de una red Wi-Fi de 2,4 GHz** en 
 | Cantidad | Componente | Notas |
 |---|---|---|
 | 1 | **ESP32 DevKit** (ESP32-WROOM-32, 30 o 38 pines) | Opcional: placa de expansión para facilitar las conexiones |
-| 1 | **Módulo MQ-135** (CO₂, amoníaco y alcohol) | Tiene 4 pines: VCC, GND, DO y AO. Dice **MQ-135** en su costado |
+| 1 | **Módulo MQ-135** (CO₂ y amoníaco) | Tiene 4 pines: VCC, GND, DO y AO. Dice **MQ-135** en su costado |
 | 1 | **Módulo MQ-7** (monóxido de carbono, CO) | Tiene 4 pines: VCC, GND, DO y AO. Dice **MQ-7** en su costado |
 | 1 | **Módulo RTC DS1307** con su pila CR2032 | Reloj; la pila mantiene la hora si se corta la luz |
 | 1 | **Módulo lector de MicroSD** (SPI) | Más una **MicroSD de 32 GB o menos**, formateada en **FAT32** |
@@ -227,7 +227,7 @@ static const char ROOT_CA[] =
 
 Cada sensor MQ es distinto. Para que las estimaciones tengan sentido hay que medir su **R0**, su resistencia en aire limpio. Los dos sensores se calibran **a la vez** y se hace **una sola vez por sensor**.
 
-> 💡 **Si tus sensores son nuevos**, déjalos energizados al menos **24 horas** (MQ-135) y **48 horas** (MQ-7) antes de calibrar: es el "quemado" inicial que indica el fabricante. Si ya los usaste antes, basta con 20 minutos.
+> 💡 **Si tus sensores son nuevos**, déjalos energizados al menos **48 horas** antes de calibrar: es el precalentamiento que indica el fabricante. Si estuvieron guardados de 1 a 6 meses, que sean **72 horas**; si fue más tiempo, **una semana** (168 horas). Si ya los usaste hace poco, basta con 20 minutos.
 
 1. Verifica que en `secrets.h` esté `#define MODO_CALIBRACION 1` y carga el programa (paso 6).
 2. Lleva la estación a un lugar con **aire limpio y ventilado** (cerca de una ventana abierta o al aire libre), **lejos** de cocinas, humo, vehículos, alcohol o productos de limpieza.
@@ -269,7 +269,7 @@ Gases: calentando los sensores (178 s restantes)
 ...
 --------------------------------------------------
 Hora: 2026-11-10 09:19:02
-MQ-135 -> CO2: 452.30 | NH4: 1.21 | Alcohol: 0.64 (ppm, estimados)
+MQ-135 -> CO2: 452.30 | NH4: 1.21 (ppm, estimados)
 MQ-7   -> CO: 2.85 (ppm, estimado)
 [API] Lectura enviada (201).
 ```
@@ -306,8 +306,8 @@ MQ-7   -> CO: 2.85 (ppm, estimado)
 | `MicroSD: NO DETECTADA` | Tarjeta no insertada, formato o cableado | Formatea en **FAT32** (32 GB o menos); revisa CS → 5, MOSI → 23, MISO → 19, SCK → 18 |
 | `Hora: ... (NO VÁLIDA)` y no envía | Sin hora: RTC sin pila y sin internet | Revisa el Wi-Fi; pon pila al RTC |
 | `MQ-135: sin calibrar` o `MQ-7: sin calibrar` | El R0 de ese sensor está en 0 en `secrets.h` | Haz la calibración (paso 7) |
-| CO siempre vacío, o CO₂/NH₃/alcohol siempre vacíos | Divisor de tensión mal armado o AO desconectado en ese sensor | Revisa el paso 3.2 |
-| El CO marca mucho cuando hay humo de cigarro o alcohol cerca | El MQ-7 también reacciona a otros gases | Es normal: el valor es una estimación |
+| CO siempre vacío, o CO₂/NH₃ siempre vacíos | Divisor de tensión mal armado o AO desconectado en ese sensor | Revisa el paso 3.2 |
+| El CO marca mucho cuando hay humo de cigarro, alcohol o gasolina cerca | El MQ-7 también reacciona a otros gases | Es normal: el valor es una estimación |
 | `[API] Error 401: Token inválido` | Token mal copiado, o estación desactivada | Copia el token **completo**, sin espacios. Si sigue, avisa a la coordinación |
 | `[API] Error 404` | Identificador de la estación mal escrito en `API_URL` | Revisa la URL que te enviaron |
 | `[API] Error 422` | Hora incorrecta, más de 5 minutos adelantada | Revisa el Wi-Fi (sincroniza la hora). Si persiste, avisa con una captura **sin** `secrets.h` |
@@ -344,7 +344,7 @@ Edita `WIFI_SSID` y `WIFI_PASSWORD` en `secrets.h` y vuelve a cargar el programa
 No. Solo una vez por sensor. Si cambias el MQ-135 o el MQ-7, recalibra (los dos se calibran juntos).
 
 **¿Por qué ya no mide temperatura ni presión?**
-La estación dejó de usar el BMP280. Ahora se enfoca en la calidad del aire: el MQ-135 (CO₂, amoníaco y alcohol) y el MQ-7 (monóxido de carbono).
+La estación dejó de usar el BMP280. Ahora se enfoca en la calidad del aire: el MQ-135 (CO₂ y amoníaco) y el MQ-7 (monóxido de carbono).
 
 **¿Cómo veo los datos guardados en la MicroSD?**
 Apaga la estación, saca la tarjeta y abre `datos.csv` con Excel o Google Sheets.

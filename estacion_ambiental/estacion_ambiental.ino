@@ -2,7 +2,7 @@
   Estación Ambiental ESP32 — firmware para la API de la estación (FISI-UNAP)
 
   Mide:
-    - MQ-135 (GPIO34, analógico): CO2, NH4 y alcohol estimados en ppm
+    - MQ-135 (GPIO34, analógico): CO2 y amoníaco (NH4/NH3) estimados en ppm
     - MQ-7   (GPIO35, analógico): CO (monóxido de carbono) estimado en ppm
     - RTC DS1307 (I2C):           fecha y hora local (Perú, UTC-05:00)
   Guarda cada lectura en la MicroSD (/datos.csv, CS en GPIO5) y la envía a la API
@@ -63,7 +63,7 @@
 #define ESTACION_CALENTAMIENTO_MS (3UL * 60UL * 1000UL)
 #endif
 #ifndef ESTACION_MQ135_R0_KOHM
-#define ESTACION_MQ135_R0_KOHM 0.0   // 0 = sin calibrar: CO2, NH4 y alcohol se envían vacíos
+#define ESTACION_MQ135_R0_KOHM 0.0   // 0 = sin calibrar: CO2 y NH4 se envían vacíos
 #endif
 #ifndef ESTACION_MQ7_R0_KOHM
 #define ESTACION_MQ7_R0_KOHM 0.0     // 0 = sin calibrar: el CO se envía vacío
@@ -105,7 +105,6 @@ const float CO2_BASE_PPM = 400.0; // CO2 de fondo que la curva del MQ-135 no inc
 struct Curva { float a; float b; };
 const Curva CURVA_CO2     = {110.47f, -2.862f};  // MQ-135
 const Curva CURVA_NH4     = {102.2f,  -2.473f};  // MQ-135
-const Curva CURVA_ALCOHOL = {77.255f, -3.18f};   // MQ-135
 const Curva CURVA_CO_MQ7  = {99.042f, -1.518f};  // MQ-7
 
 // Hora
@@ -131,7 +130,6 @@ struct Medicion {
   float co2         = NAN;
   float co          = NAN;
   float nh4         = NAN;
-  float alcohol     = NAN;
 };
 
 // Promedio acumulado del R0 durante la calibración
@@ -250,7 +248,7 @@ void prepararCsv() {
   if (!sdOk || SD.exists("/datos.csv")) return;
   File f = SD.open("/datos.csv", FILE_WRITE);
   if (f) {
-    f.println("fecha_hora,co2_ppm,co_ppm,nh4_ppm,alcohol_ppm,enviado");
+    f.println("fecha_hora,co2_ppm,co_ppm,nh4_ppm,enviado");
     f.close();
   }
 }
@@ -266,7 +264,6 @@ void guardarCsv(const DateTime& t, const Medicion& m, bool enviado) {
   f.print(","); f.print(numeroCsv(m.co2));
   f.print(","); f.print(numeroCsv(m.co));
   f.print(","); f.print(numeroCsv(m.nh4));
-  f.print(","); f.print(numeroCsv(m.alcohol));
   f.print(","); f.println(enviado ? "1" : "0");
   f.close();
 }
@@ -289,7 +286,6 @@ Medicion medir() {
   if (!isnan(co2)) co2 += CO2_BASE_PPM;
   m.co2     = enRango(co2, 0, 10000);
   m.nh4     = enRango(ppmDesdeCurva(CURVA_NH4, ratio135), 0, 10000);
-  m.alcohol = enRango(ppmDesdeCurva(CURVA_ALCOHOL, ratio135), 0, 10000);
 
   m.co = enRango(ppmDesdeCurva(CURVA_CO_MQ7, ratioActual(MQ7)), 0, 10000);
   return m;
@@ -306,8 +302,8 @@ void imprimir(const DateTime& t, const Medicion& m) {
   if (MQ135.r0 <= 0) {
     Serial.println("MQ-135: sin calibrar (ESTACION_MQ135_R0_KOHM = 0). Usa MODO_CALIBRACION 1 en secrets.h.");
   } else {
-    Serial.printf("MQ-135 -> CO2: %s | NH4: %s | Alcohol: %s (ppm, estimados)\n",
-                  numeroCsv(m.co2).c_str(), numeroCsv(m.nh4).c_str(), numeroCsv(m.alcohol).c_str());
+    Serial.printf("MQ-135 -> CO2: %s | NH4: %s (ppm, estimados)\n",
+                  numeroCsv(m.co2).c_str(), numeroCsv(m.nh4).c_str());
   }
   if (MQ7.r0 <= 0) {
     Serial.println("MQ-7: sin calibrar (ESTACION_MQ7_R0_KOHM = 0). Usa MODO_CALIBRACION 1 en secrets.h.");
@@ -372,7 +368,7 @@ void setup() {
   Serial.printf("MicroSD: %s\n", sdOk ? "OK" : "NO DETECTADA (sin respaldo local)");
   prepararCsv();
 
-  if (MQ135.r0 <= 0) Serial.println("MQ-135: sin calibrar; CO2, NH4 y alcohol se enviarán como null.");
+  if (MQ135.r0 <= 0) Serial.println("MQ-135: sin calibrar; CO2 y NH4 se enviarán como null.");
   if (MQ7.r0 <= 0)   Serial.println("MQ-7: sin calibrar; el CO se enviará como null.");
 
   if (conectarWifi(15000)) {
@@ -407,7 +403,7 @@ void loop() {
     if (!horaValida(t)) {
       Serial.println("[API] Hora no válida: no se envía (revisa el RTC o el Wi-Fi/NTP).");
     } else {
-      enviado = enviarLectura(t, m.co2, m.co, m.nh4, m.alcohol);
+      enviado = enviarLectura(t, m.co2, m.co, m.nh4);
     }
 
     guardarCsv(t, m, enviado);

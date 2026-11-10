@@ -3,7 +3,7 @@
 Firmware para estaciones de monitoreo ambiental con **ESP32**, desarrollado para la actividad de responsabilidad social de la Facultad de Ingeniería de Sistemas e Informática (FISI) de la Universidad Nacional de la Amazonía Peruana.
 
 La estación mide, cada minuto:
-- **CO₂, amoníaco y alcohol** con un sensor **MQ-135**;
+- **CO₂ y amoníaco** con un sensor **MQ-135**;
 - **monóxido de carbono (CO)** con un sensor **MQ-7**.
 
 Todos los valores son estimaciones en ppm.

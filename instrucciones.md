@@ -41,10 +41,11 @@ Cada estación tiene sus propias credenciales. La coordinación del proyecto te 
 | **Identificador de la estación** | `estacion-07` | Nombre único de tu estación en la plataforma |
 | **URL de la API** | `https://fisiunap.edu.pe/estacion-ambiental/api/estaciones/estacion-07/lecturas` | A dónde envía las lecturas tu ESP32 |
 | **Token** | 40 letras y números | Tu "contraseña" ante la API. **Es secreto** |
-| **Certificado raíz (`ROOT_CA`)** | Bloque de texto que empieza con `-----BEGIN CERTIFICATE-----` | Permite al ESP32 comprobar que se conecta al servidor real de la FISI |
 | **Dirección del dashboard** | `https://fisiunap.edu.pe/estacion-ambiental/estaciones/estacion-07` | Donde verás tus mediciones |
 
-> Las direcciones exactas se confirmarán cuando la plataforma se publique en **fisiunap.edu.pe**. Usa siempre las que te envíe la coordinación.
+> El **certificado raíz** (`ROOT_CA`), que permite al ESP32 comprobar que se conecta al servidor real de la FISI, **ya viene incluido** en la plantilla: no tienes que pedirlo ni pegarlo.
+>
+> Dashboard general de todas las estaciones: **https://fisiunap.edu.pe/estacion-ambiental/**
 
 Además necesitas el **nombre y la contraseña de una red Wi-Fi de 2,4 GHz** en el lugar donde funcionará la estación.
 
@@ -188,12 +189,11 @@ Ve a **Herramientas → Gestionar bibliotecas** (o **Sketch → Incluir bibliote
 #define API_URL        "https://fisiunap.edu.pe/estacion-ambiental/api/estaciones/estacion-07/lecturas"
 #define TOKEN_ESTACION "aQ3...(los 40 caracteres que te enviaron)..."
 
-// 3) Certificado raíz que te enviaron (cada línea entre comillas y terminada en \n)
+// 3) Certificados raíz: YA VIENEN LISTOS, no los toques
 static const char ROOT_CA[] =
+  // ISRG Root X1 ...
   "-----BEGIN CERTIFICATE-----\n"
-  "MIIF...\n"
-  "...\n"
-  "-----END CERTIFICATE-----\n";
+  ...
 
 // 4) Calibración: la primera vez, MODO_CALIBRACION en 1 (ver paso 7)
 #define MODO_CALIBRACION        1

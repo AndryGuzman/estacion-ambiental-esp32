@@ -300,7 +300,7 @@ MQ-7   -> CO: 2.85 (ppm, estimado)
 | No aparece nada | Velocidad del monitor incorrecta | Pon **115200 baudios**; pulsa el botón **EN/RST** de la placa |
 | Caracteres raros (`⸮⸮⸮`) | Velocidad incorrecta | **115200 baudios** |
 | Error al compilar: `secrets.h: No such file or directory` | Falta `secrets.h` o quedó mal nombrado | Paso 5.2: debe llamarse exactamente `secrets.h` y estar junto al `.ino` |
-| Error al compilar sobre `ROOT_CA` | Certificado mal pegado | Cada línea entre comillas y terminada en `\n"`, y un `;` al final |
+| Error al compilar sobre `ROOT_CA` | Se modificó el bloque de certificados | Vuelve a copiarlo desde `secrets.example.h` sin cambios |
 | `[WiFi] Sin conexión (¿red de 2,4 GHz? ¿contraseña?)` | Red de 5 GHz, contraseña mal escrita o señal débil | Usa una red de **2,4 GHz**; revisa mayúsculas y minúsculas; acércala al router |
 | `RTC DS1307: NO DETECTADO` | Cableado I2C o alimentación | SDA → 21, SCL → 22, VCC → 5 V. Funciona igual con la hora de internet |
 | `MicroSD: NO DETECTADA` | Tarjeta no insertada, formato o cableado | Formatea en **FAT32** (32 GB o menos); revisa CS → 5, MOSI → 23, MISO → 19, SCK → 18 |
@@ -312,7 +312,7 @@ MQ-7   -> CO: 2.85 (ppm, estimado)
 | `[API] Error 404` | Identificador de la estación mal escrito en `API_URL` | Revisa la URL que te enviaron |
 | `[API] Error 422` | Hora incorrecta, más de 5 minutos adelantada | Revisa el Wi-Fi (sincroniza la hora). Si persiste, avisa con una captura **sin** `secrets.h` |
 | `[API] Error 429` | Demasiados envíos o intentos | Espera un minuto. No reduzcas `ESTACION_INTERVALO_MS` por debajo de 60000 |
-| `[API] Falta ROOT_CA en secrets.h para usar HTTPS.` | `ROOT_CA` vacío | Pega el certificado que te enviaron |
+| `[API] Falta ROOT_CA en secrets.h para usar HTTPS.` | `ROOT_CA` vacío | Copia el bloque `ROOT_CA` de `secrets.example.h` |
 | `[API] Fallo de conexión: ...` | Sin internet, URL mal escrita o certificado incorrecto | Comprueba que la red tenga internet; revisa `API_URL` y `ROOT_CA` |
 | La placa se reinicia sola, o `Brownout detector was triggered` | Alimentación insuficiente | Usa la fuente de **5 V y 2 A**, no una pila de 9 V ni un USB débil |
 | Al subir: `Failed to connect to ESP32` | La placa no entró en modo de carga | Mantén presionado **BOOT** mientras dice `Connecting...` (paso 6) |

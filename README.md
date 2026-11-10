@@ -27,7 +27,8 @@ Cada lectura se guarda en una **MicroSD**, con fecha y hora de un reloj **DS1307
 - **Placa:** ESP32 DevKit (ESP32-WROOM-32), en el Arduino IDE como **ESP32 Dev Module**.
 - **Arduino IDE 2.x** con el paquete de placas **esp32** de Espressif (probado con la versión 3.3.12).
 - **Librería:** RTClib (Adafruit).
-- **Credenciales de tu estación** (identificador, token y certificado), que entrega la coordinación por un canal interno.
+- **Credenciales de tu estación** (identificador y token), que entrega la coordinación por un canal interno. El certificado del servidor ya viene en la plantilla.
+- **Dashboard en vivo:** https://fisiunap.edu.pe/estacion-ambiental/
 
 ## Seguridad
 

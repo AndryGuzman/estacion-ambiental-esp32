@@ -43,21 +43,23 @@
 static const char ROOT_CA[] = "";
 
 // -----------------------------------------------------------------------------
-// 4) CALIBRACIÓN DEL SENSOR MQ-135  (la haces tú, ver instrucciones.md, paso 7)
-//    - Primera vez: deja MODO_CALIBRACION en 1, carga el programa y anota el
-//      "R0 promedio" que aparece en el Monitor Serie después de ~20 minutos.
-//    - Luego: pon MODO_CALIBRACION en 0 y escribe ese número en ESTACION_MQ_R0_KOHM.
-//    Con ESTACION_MQ_R0_KOHM en 0 la estación funciona, pero envía los gases vacíos.
+// 4) CALIBRACIÓN DE LOS SENSORES MQ-135 Y MQ-7  (la haces tú, ver instrucciones.md, paso 7)
+//    - Primera vez: deja MODO_CALIBRACION en 1, carga el programa y anota los dos
+//      "R0 promedio" (MQ-135 y MQ-7) que aparecen en el Monitor Serie después de ~20 minutos.
+//    - Luego: pon MODO_CALIBRACION en 0 y escribe cada número en su línea.
+//    Con un R0 en 0 la estación funciona, pero envía vacíos los gases de ese sensor.
 // -----------------------------------------------------------------------------
-#define MODO_CALIBRACION     1
-#define ESTACION_MQ_R0_KOHM  0.0
+#define MODO_CALIBRACION        1
+#define ESTACION_MQ135_R0_KOHM  0.0   // CO2, amoníaco y alcohol
+#define ESTACION_MQ7_R0_KOHM    0.0   // monóxido de carbono (CO)
 
 // -----------------------------------------------------------------------------
 // 5) AJUSTES DE HARDWARE  (solo si tu montaje es distinto al de la guía)
 // -----------------------------------------------------------------------------
-// Divisor de tensión en la salida del MQ-135 (dos resistencias iguales = 2.0).
-#define ESTACION_MQ_DIVISOR  2.0
+// Divisor de tensión en la salida de cada sensor (dos resistencias iguales = 2.0).
+#define ESTACION_MQ135_DIVISOR  2.0
+#define ESTACION_MQ7_DIVISOR    2.0
 
 // Opcionales (deja comentados para usar los valores por defecto):
 // #define ESTACION_INTERVALO_MS      60000   // ms entre lecturas (por defecto, 1 minuto)
-// #define ESTACION_CALENTAMIENTO_MS  180000  // ms de espera inicial del MQ-135 (3 minutos)
+// #define ESTACION_CALENTAMIENTO_MS  180000  // ms de espera inicial de los sensores (3 minutos)

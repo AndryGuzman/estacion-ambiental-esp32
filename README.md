@@ -3,8 +3,10 @@
 Firmware para estaciones de monitoreo ambiental con **ESP32**, desarrollado para la actividad de responsabilidad social de la Facultad de Ingeniería de Sistemas e Informática (FISI) de la Universidad Nacional de la Amazonía Peruana.
 
 La estación mide, cada minuto:
-- **calidad del aire** con un **MQ-135**: CO₂, CO, amoníaco y alcohol, como estimaciones;
-- **temperatura, presión y altitud** con un **BMP280**.
+- **CO₂, amoníaco y alcohol** con un sensor **MQ-135**;
+- **monóxido de carbono (CO)** con un sensor **MQ-7**.
+
+Todos los valores son estimaciones en ppm.
 
 Cada lectura se guarda en una **MicroSD**, con fecha y hora de un reloj **DS1307** sincronizado por internet, y se envía por Wi-Fi a la **API de la FISI**, donde se publica en un dashboard en tiempo real.
 
@@ -24,7 +26,7 @@ Cada lectura se guarda en una **MicroSD**, con fecha y hora de un reloj **DS1307
 
 - **Placa:** ESP32 DevKit (ESP32-WROOM-32), en el Arduino IDE como **ESP32 Dev Module**.
 - **Arduino IDE 2.x** con el paquete de placas **esp32** de Espressif (probado con la versión 3.3.12).
-- **Librerías:** Adafruit BMP280 Library, Adafruit Unified Sensor, Adafruit BusIO y RTClib.
+- **Librería:** RTClib (Adafruit).
 - **Credenciales de tu estación** (identificador, token y certificado), que entrega la coordinación por un canal interno.
 
 ## Seguridad
@@ -34,7 +36,7 @@ Cada lectura se guarda en una **MicroSD**, con fecha y hora de un reloj **DS1307
 
 ## Aviso sobre los datos
 
-Las concentraciones de gases del MQ-135 son **estimaciones** que dependen de la calibración del sensor. No sustituyen un instrumento certificado.
+Las concentraciones de gases del MQ-135 y del MQ-7 son **estimaciones** que dependen de la calibración de cada sensor. No sustituyen un instrumento certificado.
 
 ## Licencia
 
